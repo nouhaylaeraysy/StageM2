@@ -187,3 +187,26 @@ cell_counts <- table(cell_data)
 
 # Print the table of cluster sizes
 print(cell_counts)
+
+### try res 2
+DimPlot(larval1, group.by = "RNA_snn_res.1.5")
+FeaturePlot(larval1, features = "LOC6627282")
+VlnPlot(larval1, features = c("LOC6627282"),
+        assay = "RNA", ncol = 2, pt.size = 0.1, group.by = "RNA_snn_res.2")
+
+
+
+
+
+## step 7 : subset the cluster of neuroblaste (deadpn positif)
+nw_object <- c(9,20,29)
+NBS1 <- subset(larval1, idents = nw_object)
+NBS1
+a <- SubsetData(larval1, ident.use = 9 )
+NBS2 <- subset(larval2, idents = nw_object)
+NBS3 <- subset(larval3, idents = nw_object)
+
+saveRDS(NBS1 , "clusterNBs1.rds")
+saveRDS(NBS2 , "clusterNBs2.rds")
+saveRDS(NBS3 , "clusterNBs3.rds")
+
