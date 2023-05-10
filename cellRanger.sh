@@ -16,7 +16,7 @@
 # ########################################################
 
 # #Needs to be done only once, then the same ref genome can be used each time
-# # remove the # to use
+# 
 
 cd /scratch/
 
