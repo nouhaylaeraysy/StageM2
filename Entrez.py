@@ -1,5 +1,7 @@
 from Bio import Entrez
+import csv 
 
+gene_data = {}
 def fetch_gene_names(input_file, output_file):
     Entrez.email = 'ernouha2@gmail.com'  # email address registered in NCBI
 
@@ -20,21 +22,23 @@ def fetch_gene_names(input_file, output_file):
     gene_names = []
     for record in response['DocumentSummarySet']['DocumentSummary']:
         gene_name = record['Description']
-        gene_names.append(gene_name)
+        id = record['Name']
+        #gene_names.append(gene_name)
+        gene_data[id] = gene_name
+    #print(gene_data)
 
-    # Print the gene names
-    for gene_name in gene_names:
-        print(gene_name)
+    with open("gene_id_name.csv", "w", newline="") as file:
+        writer = csv.writer(file, delimiter="\t")
 
-    # Store the gene names in the output file
-    with open(output_file, 'w') as file:
-        for gene_name in gene_names:
-            file.write(gene_name + '\n')
+        # Écrire l'en-tête du fichier CSV
+        writer.writerow(["gene_id virilis", "gene_ description virilis "])
 
-    print("The gene names have been stored in the file", output_file)
+        # Écrire chaque paire clé-valeur dans une ligne du fichier CSV
+        for key, value in gene_data.items():
+            writer.writerow([key, value])
+
 
 # Usage example
-input_file = "list_ofTF_Data2_fetchData.txt"
-output_file = "gene_names_Data2_fetch.txt"
+input_file = "list_TF_PheatmapKons1.txt"
+output_file = "gene_id_names.txt"
 fetch_gene_names(input_file, output_file)
-
