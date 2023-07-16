@@ -1,3 +1,4 @@
+#import modules : 
 import csv
 import os.path
 import re
@@ -24,12 +25,14 @@ with open("FlyBase_Fields_download.txt", "r") as fichier:
             symbols.add(symbol)
 
 search_terms = list(symbols)
+#print(search_terms)
 
-# Creating an empty dictionary
-best_matches = {}
+
+#Creating an empty dictionary
+best_matches = {} 
 
 def search_exact_word(mot, texte):
-    pattern = r'\b{}\b'.format(re.escape(mot))  # search for a whole word and ignore partial matches {}
+    pattern = r'\b{}\b'.format(re.escape(mot))  #search for a whole word and ignore partial matches {}
     match = re.search(pattern, texte, re.IGNORECASE)
     if match:
         return texte
@@ -43,23 +46,21 @@ with open('List_of_genes_Description.csv', 'r') as rf:
         gene_id = row[0]
         role = row[1]
         for term in search_terms:
-            result = search_exact_word(term, row[1])
-            if result != 0:
+            result = search_exact_word(term , row[1])
+            if(result != 0):
+                #print(result, '-->', term)  # ex :print.txt
                 best_matches[gene_id] = (row[1], term)
+                #print(best_matches)# {'LOC100114390': ('AP-1 complex subunit gamma-1, transcript variant X13', 'ap')}
 
-# Check if the file "matched_withsymbol.csv" already exists
-if not os.path.isfile('matched_withsymbol.csv'):
-    # Create an output csv file
-    with open('matched_withsymbol.csv', 'w', newline='') as wf:
-        writer = csv.writer(wf)
+# create an output csv file 
+with open('matched_withsymbol.csv', 'w', newline='') as wf:
+    writer = csv.writer(wf)
+    
+    # header of csv file 
+    writer.writerow(['gene_id', 'role', 'term'])
+    
+    # write a data of best_matches in csv file 
+    for gene_id, (role, term) in best_matches.items():
+        writer.writerow([gene_id, role, term])
 
-        # header of csv file
-        writer.writerow(['gene_id', 'role', 'term'])
-
-        # write data of best_matches to csv file
-        for gene_id, (role, term) in best_matches.items():
-            writer.writerow([gene_id, role, term])
-
-    print("The file matched_withsymbol.csv is created.")
-else:
-    print("The file matched_withsymbol.csv already exists.")
+print("the file best_matches.csv is created.")
