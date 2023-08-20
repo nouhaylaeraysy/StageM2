@@ -1,13 +1,19 @@
-library(slingshot)
-library(pheatmap)
-library(tradeSeq)
+suppressPackageStartupMessages({
+  library(slingshot); library(SingleCellExperiment)
+  library(RColorBrewer); library(scales)
+  library(viridis)
+  library(pheatmap)
+  library(knitr); library(gridExtra)
+  library(tradeSeq); library(RColorBrewer)
+})
 
-cluster29NBS <- readRDS("cluster29NBS.rds")
-cluster29NBS
-sce <- as.SingleCellExperiment(cluster29NBS, assay = "RNA")
+cluster_subset <- readRDS("clusterNBS.rds")
+cluster_subset
+sce <- as.SingleCellExperiment(cluster_subset, assay = "RNA")
 
 sce <- slingshot(sce, reducedDim = 'UMAP')
 set.seed(3)
+library(tradeSeq)
 icMat <- evaluateK(counts = as.matrix(assays(sce)$counts),
                    pseudotime = sce@colData@listData[["slingshot"]]@assays@data@listData[["pseudotime"]],
                    cellWeights = sce@colData@listData[["slingshot"]]@assays@data@listData[["weights"]],
@@ -16,19 +22,19 @@ icMat <- evaluateK(counts = as.matrix(assays(sce)$counts),
 
 set.seed(3)
 sce <- fitGAM(sce,
-              nknots = 7)
+              nknots = 6)
 mean(rowData(sce)$tradeSeq$converged)
 
-saveRDS(sce, "sce_cluster29.rds")
+saveRDS(sce, "sce_clusterNBs.rds")
 
-sce <- readRDS("sce_cluster29.rds")
+sce <- readRDS("sce_clusterNBs.rds")
 sce
 #run association test
 ATres <- associationTest(sce)
 
-saveRDS(ATres, "Atres_cluster29.rds")
+saveRDS(ATres, "Atres_clusterNBs.rds")
 
-ATres <- readRDS("Atres_cluster29.rds")
+ATres <- readRDS("Atres_clusterNBs.rds")
 ATres
 
 virilisTFs<-read.csv("virilis_list_TFs.csv")
@@ -41,12 +47,8 @@ plotSmoothers(sce, assays(sce)$counts, gene = "LOC6629707", alpha =1, border = T
 plotSmoothers(sce, assays(sce)$counts, gene = "LOC6629478", alpha =1, border = TRUE) + ggtitle("LOC6629478") #tll
 plotSmoothers(sce, assays(sce)$counts, gene = "LOC6627282", alpha =1, border = TRUE) + ggtitle("LOC6627282") #dpn
 plotSmoothers(sce, assays(sce)$counts, gene = "LOC6635714", alpha =1, border = TRUE) + ggtitle("LOC6635714") # slp1
-plotSmoothers(sce, assays(sce)$counts, gene = "LOC6635692", alpha =1, border = TRUE) + ggtitle("LOC6635692") #slp2
-
-
-
-dir.create("plots_TEMPORALdf")
-dir.create("plots2_NONTEMPORALdf")
+dir.create("plots_TEMPORALdfDATA1")
+dir.create("plots2_NONTEMPORALdfDATA1")
 
 # Loop over the candidate TFs
 for (i in 1:length(virilisTFs_cand)) {
@@ -88,19 +90,14 @@ for (i in 1:length(virilisTFs_cand)) {
     min_index
     
     if(mean_vals[max_index] > 0.5 && any(mediane_vals[-max_index] < 0.25) ) {
-      ggsave(paste0("plots_TEMPORALdf/", gene_id, ".png"), plot = plot_data, width = 10, height = 7)
+      ggsave(paste0("plots_TEMPORALdfDATA1/", gene_id, ".png"), plot = plot_data, width = 10, height = 7)
     }
     else{
-      ggsave(paste0("plots2_NONTEMPORALdf/", gene_id, ".png"), plot = plot_data, width = 10, height = 7)
+      ggsave(paste0("plots2_NONTEMPORALdfDATA1/", gene_id, ".png"), plot = plot_data, width = 10, height = 7)
       
     }
     
   }
 }
-
-
-
-
-
 
 

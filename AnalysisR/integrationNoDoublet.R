@@ -14,7 +14,6 @@ reference_list
 features <- SelectIntegrationFeatures(object.list = reference_list)
 larvaOL.anchors <- FindIntegrationAnchors(object.list = reference_list, dims = 1:150 , anchor.features = features)
 saveRDS(larvaOL.anchors ,"larvaOL.anchors_doubletFinder.rds")
-larvaOL.anchors <- readRDS("larvaOL.anchors_doubletFinder.rds")
 larvaOL.integrated <- IntegrateData(anchorset = larvaOL.anchors, dims = 1:150)
 saveRDS(larvaOL.integrated , "larvalolintegrated_from_optimlib_doubletFinder.rds")
 larvaOL.integrated <- readRDS("larvalolintegrated_from_optimlib_doubletFinder.rds")
@@ -27,19 +26,20 @@ larvaOL.integrated
 pdf("dimplot_orig.identsDF.pdf")
 DimPlot(larvaOL.integrated, reduction = "umap" , group.by = "orig.ident") # cells from both library are over each other are not separated due to conditions exactly what we want to doo with integration 
 dev.off()
-larvaOL.integrated
+
 larvaOL.integrated <-FindNeighbors(object = larvaOL.integrated, dims = 1:150)
 saveRDS(larvaOL.integrated , "larvaOL.integrated_after_findNeighbourds_df.rds")
 larvaOL.integrated <- readRDS("larvaOL.integrated_after_findNeighbourds_df.rds")
-#larvaOL.integrated <-FindClusters(object = larvaOL.integrated, resolution = seq(0.5,10, by=0.5))
+larvaOL.integrated <-FindClusters(object = larvaOL.integrated, resolution = seq(0.5,10, by=0.5))
 larvaOL.integrated <-FindClusters(object = larvaOL.integrated, resolution = 1.5)
 
 #pdf("clustree_integratedDatadf.pdf")
-#clustree(larvaOL.integrated@meta.data[,grep("integrated_snn_res.", colnames(larvaOL.integrated@meta.data))], prefix = "integrated_snn_res.")
+clustree(larvaOL.integrated@meta.data[,grep("integrated_snn_res.", colnames(larvaOL.integrated@meta.data))], prefix = "integrated_snn_res.")
 #dev.off()
+#DimPlot(larvaOL.integrated, reduction = "umap",group.by = "integrated_snn_res.1.5", label = TRUE)
 
 
-DefaultAssay(larvaOL.integrated) <-"RNA"
+#DefaultAssay(larvaOL.integrated) <-"RNA"
 pdf(file = "Dimplotintegrateddf.pdf")
 DimPlot(larvaOL.integrated, reduction = "umap", label = TRUE)
 dev.off()
@@ -78,24 +78,19 @@ cell_counts <- table(cell_data)
 # Print the table of cluster sizes
 print(cell_counts)  # check the cluster finded by VlnPlot
 write.csv(cell_counts, file = "count_of_cell_intgration.csv")
+saveRDS(larvaOL.integrated , "larvaOL.integrated.rds")
+larvaOL.integrated <- readRDS("larvaOL.integrated.rds")
 
 ###subset cluster of cells expressing dpn
 nw_object <- c(29)
-cluster29NBS <- subset(larvaOL.integrated, idents = nw_object)
-cluster29NBS
-saveRDS(cluster29NBS, "cluster29NBS.rds")
+clusterNBS <- subset(larvaOL.integrated, idents = nw_object)
+clusterNBS
+saveRDS(clusterNBS, "clusterNBS.rds")
 
-FeaturePlot(cluster29NBS , features = c('LOC6629478' , 'LOC6629707') , blend = TRUE )
-FeaturePlot(cluster29NBS , features = 'rna_LOC6627282' )
+clusterNBS <- readRDS("clusterNBS.rds")
+FeaturePlot(clusterNBS , features = c('LOC6629478' , 'LOC6629707') , blend = TRUE )
+FeaturePlot(clusterNBS , features = 'rna_LOC6627282' )
 
-gene <- "LOC6627282"
-expr <- FetchData(cluster29NBS,vars = gene)
-my_object <- cluster29NBS[, which(x = expr > 0)]
-my_object
-FeaturePlot(my_object , features = c('LOC6629478' , 'LOC6629707') , blend = T )
-FeaturePlot(my_object , features = 'LOC6627282' )
-FeaturePlot(my_object , features = c('LOC6629478' , 'LOC6629707'))
-saveRDS(my_object,"my_object_FetchDataDa1.rds")
-my_object <- readRDS("my_object_FetchDataDa1.rds")
+
 
 
