@@ -42,9 +42,8 @@ pK  # 0.02
 ## Homotypic Doublet Proportion Estimate -------------------------------------------------------------------------------------
 annotations <- lib3@meta.data$seurat_clusters
 annotations
-homotypic.prop <- modelHomotypic(annotations)           ## ex: annotations <- seu_kidney@meta.data$ClusteringResults
-homotypic.prop
-nExp_poi <- round(0.13*nrow(lib3@meta.data))  ## Assuming 7.5% doublet formation rate - tailor for your dataset
+homotypic.prop <- modelHomotypic(annotations)           
+nExp_poi <- round(0.13*nrow(lib3@meta.data))  
 nExp_poi.adj <- round(nExp_poi*(1-homotypic.prop))
 
 
