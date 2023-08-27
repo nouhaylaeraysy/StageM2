@@ -45,7 +45,7 @@ annotations <- lib2@meta.data$seurat_clusters
 annotations
 homotypic.prop <- modelHomotypic(annotations)           
 homotypic.prop
-nExp_poi <- round(0.13*nrow(lib2@meta.data))  ## Assuming 13%% doublet formation rate 
+nExp_poi <- round(0.13*nrow(lib2@meta.data))  ## Assuming 13% doublet formation rate 
 nExp_poi.adj <- round(nExp_poi*(1-homotypic.prop))
 
 
