@@ -30,7 +30,7 @@ dev.off()
 larvaOL.integrated <-FindNeighbors(object = larvaOL.integrated, dims = 1:150)
 saveRDS(larvaOL.integrated , "larvaOL.integrated_after_findNeighbourds_df.rds")
 larvaOL.integrated <- readRDS("larvaOL.integrated_after_findNeighbourds_df.rds")
-larvaOL.integrated <-FindClusters(object = larvaOL.integrated, resolution = seq(0.5,10, by=0.5))
+#larvaOL.integrated <-FindClusters(object = larvaOL.integrated, resolution = seq(0.5,10, by=0.5))
 larvaOL.integrated <-FindClusters(object = larvaOL.integrated, resolution = 1.5)
 
 #pdf("clustree_integratedDatadf.pdf")
